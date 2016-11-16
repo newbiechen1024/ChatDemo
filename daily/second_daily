@@ -1,0 +1,49 @@
+一、总结first_day残留的问题
+
+1、MeasureSpec中UNSPECIFIED的作用。
+
+在RefreshListView刷新控件中有这么一段代码
+刷新的头部控件，的高度被设置为UNSPECIFIED：
+int lpHeight = p.height;
+ int childHeightSpec;
+ if (lpHeight > 0) {
+     childHeightSpec = MeasureSpec.makeMeasureSpec(lpHeight, MeasureSpec.EXACTLY);
+ } else {
+     childHeightSpec = MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED);
+ }
+并且令头部控件的layout_height="match_parent"或wrap_content时
+该View的大小，默认为wrap_content但是当滑动的时候，会变大。
+这个的原理到底是什么
+
+已知：
+当ViewGroup的高度设置为match_parent和wrap_content并通过
+MeasureSpec.UNSPECIFIED设置后，ViewGroup的大小默认为wrap_content之后，
+通过滑动，能够使ViewGroup变大，但是其内部布局不改变，就像只是增加了Padding。
+(障碍，为什么滑动能够使ViewGroup变大,唯一知道的是通过改变ViewGroup的PaddingTop，
+但是不知道是如何改变其ViewGroup的Padding的，因为当ViewGroup设置为EXACT的时候，
+并没有改变其padding)
+(还有问题，是只能在ListView中使用的吗？，看来必须要看一下ListView的源码才能解开这个
+谜团了)
+
+总之记住使用就可以了。
+
+2、制作已知的两种ListView，写出具体步骤，难点，及失误的地方。
+（在TeachingDemo/CreateRefreshView中，并写daily，最后上传到git）
+
+3、扩展：制作仿QQ聊天的ListView+刷新的控件，并找出ListView能够与头部控件滑动的弹性
+的原理（尽量）
+
+二、编写昨天未完成的事情
+
+1、加入消息发送加载，完成，失败的图标，和逻辑
+
+在layout加入图标
+
+在ChatMessage加入表示当前信息状态的标识
+
+当加载完成时候，切换该ChatMessage的状态，并刷新。
+
+测试遇到的问题：
+1、EditText自动获取焦点
+
+2、软键盘只会让输入框上移，个人希望让其全部上移

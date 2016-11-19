@@ -1,0 +1,127 @@
+一、昨天未完成的问题
+
+1、在不移动ActionBar的情况下，显示keyboard，并让ListView与发送框上移。（完成）
+
+思路:将显示的部分包装在ScrollView中，然后获取ListView的大小，动态设置ListView。
+之后，当点击ListView的时候隐藏键盘。
+
+1、根据发送框的大小，设置初始ListView的大小。（不自定义View没法设置）
+
+2、Layout的内部参数为，ListView和发送框，顺序不能搞错。
+
+3、当Keyboard显示或者隐藏的时候，通过使用ScrollTo()来进行移动。
+
+
+二、新的问题
+
+1、解决无法查看源码的问题。
+
+原因是AndroidSDK/sources中没有android-25这个文件。
+用SDKTools直接下载只能下载AndroidSDK/platform的android-25文件，无法下载android-25
+因为一般SDKTools都有SDKForSources，android-25的没有- - ，不知道为什么。可能必须用
+Settings中的AndroidSDK，下载就会有SDKForSources文件了。
+
+2、如何动态改变ViewGroup的大小。
+
+第一种：使用setLayoutParams
+
+FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
+        500,600
+);
+mRlContent.setLayoutParams(params);
+
+注意：
+1、LayoutParams必须使用FrameLayout.LayoutParams，不能使用ViewGroup.LayoutParams
+2、setLayoutParams();会自动使用requestLayout()方法
+
+第二种：
+ViewGroup.LayoutParams layoutParams = mRlContent.getLayoutParams();
+layoutParams.width = 500;
+layoutParams.height = 500;
+mRlContent.setLayoutParams(layoutParams);
+
+问题：无法动态修改ScrollView中的ViewGroup大小，该ViewGroup的大小由ScrollView控制。
+
+3、如何判断keyboard是否打开
+
+通过在RootView中注册GlobListener，当布局改变的时候，回调监听。
+最后记得需要解除注册：
+@Override
+protected void onDestroy() {
+    //移除布局变化监听
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+        getWindow().getDecorView().getViewTreeObserver().removeOnGlobalLayoutListener(mLayoutChangeListener);
+    } else {
+        getWindow().getDecorView().getViewTreeObserver().removeGlobalOnLayoutListener(mLayoutChangeListener);
+    }
+    super.onDestroy();
+};
+由于窗口是根据statusbar+actionbar+FrameLayout+navbar组成的大小 = DectorView视图的大小。
+当不显示视图的时候statusbar+actionbar+FramentLayout+navbar = DecotView。
+当显示的时候，由于FrameLayout会缩小(adjust_resize情况下，或者默认情况下)
+所以statusbar+actionbar+framntLayout+navbar < DectorView
+
+4、如何获取StatusBar、Navbar的大小
+(参考：http://blog.csdn.net/xidianluke/article/details/49331935)
+private int getStatusBarHeight() {
+    Resources resources = getResources();
+    int resourceId = resources.getIdentifier("status_bar_height", "dimen","android");
+    int height = resources.getDimensionPixelSize(resourceId);
+    Log.v("dbw", "Status height:" + height);
+    return height;
+}
+
+statusbar的大小，被设置在了Android/values/dimens中，所以直接通过resource资源获取就可以了。
+
+Navbar(虚拟按键)：
+
+通过获取整个手机屏幕的大小 - App占用屏幕的大小 = 虚拟按键的大小
+
+//获取屏幕原始尺寸高度，包括虚拟功能键高度
+public static int getDpi(Context context){
+    int dpi = 0;
+    WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+    Display display = windowManager.getDefaultDisplay();
+    DisplayMetrics displayMetrics = new DisplayMetrics();
+    @SuppressWarnings("rawtypes")
+    Class c;
+    try {
+        c = Class.forName("android.view.Display");
+        @SuppressWarnings("unchecked")
+        Method method = c.getMethod("getRealMetrics",DisplayMetrics.class);
+        method.invoke(display, displayMetrics);
+        dpi=displayMetrics.heightPixels;
+    }catch(Exception e){
+        e.printStackTrace();
+    }
+    return dpi;
+}
+
+
+public static int getScreenHeight(Context context)
+{
+    WindowManager wm = (WindowManager) context
+            .getSystemService(Context.WINDOW_SERVICE);
+    DisplayMetrics outMetrics = new DisplayMetrics();
+    wm.getDefaultDisplay().getMetrics(outMetrics);
+    return outMetrics.heightPixels;
+}
+
+public static int getNavbarHeight(Context context){
+    return getDpi(context) - getScreenHeight(context);
+}
+
+补充：获取虚拟键盘的高度
+通过显示时候FrameLayout的大小，隐藏的时候FrameLayout的大小，就能够获取到了。
+
+5、如何显示，隐藏软键盘
+(参考:http://blog.csdn.net/h7870181/article/details/8332991)
+获取：InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+通过使用：imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
+就能够切换软键盘的显示或隐藏。
+
+注：imm.isAlive()也表示当前键盘是否显示。但是个人测试，当keyboard隐藏的时候，也会出现
+true。所以使用addGlobeListener比较靠谱
+
+实现监听软键盘状态的接口
+（http://blog.csdn.net/ccpat/article/details/46730771）

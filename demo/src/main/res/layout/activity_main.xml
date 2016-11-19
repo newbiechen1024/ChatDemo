@@ -1,16 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:id="@+id/activity_main"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main_sv"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.newbiechen.demo.MainActivity">
-
-    <com.newbiechen.demo.widget.RefreshListView
-        android:id="@+id/main_lv"
+    android:scrollbars="none">
+    <LinearLayout
+        android:id="@+id/main_linear_content"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:divider="@null"
-        android:dividerHeight="3dp">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-    </com.newbiechen.demo.widget.RefreshListView>
-</RelativeLayout>
+        <com.newbiechen.demo.widget.RefreshListView
+            android:id="@+id/main_lv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:divider="@null"
+            android:dividerHeight="3dp"
+            android:transcriptMode="normal">
+
+        </com.newbiechen.demo.widget.RefreshListView>
+
+        <LinearLayout
+            android:id="@+id/main_linear_sendFrame"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:padding="4dp">
+
+            <EditText
+                android:id="@+id/main_et_content"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:maxLines="4" />
+
+            <Button
+                android:id="@+id/main_btn_send"
+                android:layout_width="60dp"
+                android:layout_height="40dp"
+                android:layout_marginLeft="4dp"
+                android:focusable="true"
+                android:text="发送"
+                android:textColor="@android:color/white"/>
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

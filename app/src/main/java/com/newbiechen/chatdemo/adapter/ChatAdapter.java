@@ -8,6 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.newbiechen.chatdemo.R;
 import com.newbiechen.chatdemo.entity.ChatMessage;
@@ -63,6 +64,14 @@ public class ChatAdapter extends BaseAdapter {
             holder.tvContent = (TextView) view.findViewById(R.id.msg_tv_content);
             holder.pbSending = (ProgressBar) view.findViewById(R.id.msg_pb_load);
             holder.ivSendFail = (ImageView) view.findViewById(R.id.msg_iv_send_fail);
+
+            holder.tvContent.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(mContext, "成功", Toast.LENGTH_SHORT).show();
+                }
+            });
+
 
             view.setTag(holder);
         }

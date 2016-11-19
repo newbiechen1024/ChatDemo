@@ -1,44 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_main"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main_sv_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context="com.newbiechen.chatdemo.MainActivity">
+    android:fillViewport="true"
+    android:scrollbars="none">
 
-    <com.newbiechen.chatdemo.widget.RefreshListView
-        android:id="@+id/main_rlv"
+    <FrameLayout
+        android:id="@+id/main_rl_content"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:divider="@null"
-        android:dividerHeight="3dp"
-        android:focusable="false"
-        android:clickable="false">
-    </com.newbiechen.chatdemo.widget.RefreshListView>
+        android:layout_height="match_parent">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:padding="4dp">
+        <com.newbiechen.chatdemo.widget.RefreshListView
+            android:id="@+id/main_rlv_item"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:divider="@null"
+            android:dividerHeight="3dp"
+            android:listSelector="#00000000">
+        </com.newbiechen.chatdemo.widget.RefreshListView>
 
-        <EditText
-            android:id="@+id/main_et_content"
-            android:layout_width="0dp"
-            android:layout_height="40dp"
-            android:layout_weight="1"
-            android:maxLines="4"
-            android:background="@color/replyFrame"/>
+        <LinearLayout
+            android:id="@+id/main_linear_send_frame"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_gravity="bottom"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:padding="4dp">
 
-        <Button
-            android:id="@+id/main_btn_send"
-            android:layout_width="60dp"
-            android:layout_height="40dp"
-            android:layout_marginLeft="4dp"
-            android:text="发送"
-            android:textColor="@android:color/white"/>
-    </LinearLayout>
-</LinearLayout>
+            <EditText
+                android:id="@+id/main_et_content"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:maxLines="4"
+                android:background="@color/replyFrame"/>
+
+            <Button
+                android:id="@+id/main_btn_send"
+                android:layout_width="60dp"
+                android:layout_height="40dp"
+                android:layout_marginLeft="4dp"
+                android:focusable="true"
+                android:text="发送"
+                android:textColor="@android:color/white"/>
+        </LinearLayout>
+    </FrameLayout>
+</ScrollView>

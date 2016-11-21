@@ -1,0 +1,36 @@
+一、任务
+
+1、TextView中的高亮显示。
+
+逻辑：
+使用SpannableString，具体使用参考:
+http://blog.csdn.net/snowdream86/article/details/6776629
+http://blog.csdn.net/llping2011/article/details/10301291
+http://blog.csdn.net/top_code/article/details/17790363
+（今天分析其使用原理）
+
+高亮：以Http:// 、www.、手机号码、邮箱这样的文字、标签。使用正则表达式。
+使用：
+首先编写正则表达式，判断文字中是否存在这样的字段。
+
+实验一：
+1、缺少标签的高亮
+
+2、Http://www.xxx.xxx 的正则与 www.xxx.xxx有重复的问题
+
+3、匹配算法问题严重，效率太低，需要重新制作。
+[^\\s]会拉低太多的效率，需要改变。
+可能是^这个会拉低效率。
+
+暂时修改完成。
+
+2、重构当前代码，将keyboard设置为一个组件。
+
+创建KeyboardStateHelper，监听Keyboard的状态。
+创建ChatKeyboard组件
+
+二、遗留的问题
+
+1、当打开键盘的时候，ListView会与ChatFrame重叠的问题
+
+2、selector对Button无效的问题。

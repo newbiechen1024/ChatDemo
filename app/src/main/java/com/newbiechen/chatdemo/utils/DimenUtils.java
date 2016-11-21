@@ -55,7 +55,7 @@ public class DimenUtils {
      * @return
      */
     public static int getContentLayoutHeight(AppCompatActivity activity){
-        return activity.findViewById(android.R.id.content).getHeight();
+        return activity.findViewById(android.R.id.content).getMeasuredHeight();
     }
 
     /**

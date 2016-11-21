@@ -1,6 +1,9 @@
 package com.newbiechen.chatdemo.adapter;
 
 import android.content.Context;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,9 +15,11 @@ import android.widget.Toast;
 
 import com.newbiechen.chatdemo.R;
 import com.newbiechen.chatdemo.entity.ChatMessage;
+import com.newbiechen.chatdemo.utils.PatternUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
 
 import static android.view.View.GONE;
 
@@ -81,7 +86,7 @@ public class ChatAdapter extends BaseAdapter {
         //初始化数据
         ChatMessage msg = (ChatMessage) getItem(i);
         holder.ivIcon.setImageResource(R.mipmap.default_head);
-        holder.tvContent.setText(msg.getContent());
+        holder.tvContent.setText(setTextHighLight(msg.getContent()));
         //判断当前img状态
         switch (msg.getMsgStatus()){
             case ChatMessage.STATUS_SENDING:
@@ -98,6 +103,22 @@ public class ChatAdapter extends BaseAdapter {
                 break;
         }
         return view;
+    }
+
+    private SpannableString setTextHighLight(String str){
+        SpannableString spanString = new SpannableString(str);
+        ForegroundColorSpan colorSpan = new ForegroundColorSpan(
+                mContext.getResources().getColor(R.color.text_foreground_color)
+        );
+        //全部用正则表达式检查一遍
+        for (PatternUtils.PatternType patternType : PatternUtils.PatternType.values()){
+            Matcher matcher = PatternUtils.pattern(str,patternType);
+            while (matcher.find()){
+                spanString.setSpan(colorSpan,matcher.start()
+                        ,matcher.end(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
+        }
+        return spanString;
     }
 
     @Override

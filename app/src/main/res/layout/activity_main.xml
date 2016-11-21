@@ -8,44 +8,29 @@
     android:scrollbars="none">
 
     <FrameLayout
-        android:id="@+id/main_rl_content"
+
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.newbiechen.chatdemo.widget.RefreshListView
-            android:id="@+id/main_rlv_item"
+        <LinearLayout
+            android:id="@+id/main_linear_content"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:divider="@null"
-            android:dividerHeight="3dp"
-            android:listSelector="#00000000">
-        </com.newbiechen.chatdemo.widget.RefreshListView>
-
-        <LinearLayout
-            android:id="@+id/main_linear_send_frame"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_gravity="bottom"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:padding="4dp">
-
-            <EditText
-                android:id="@+id/main_et_content"
-                android:layout_width="0dp"
-                android:layout_height="40dp"
+            android:orientation="vertical">
+            <com.newbiechen.chatdemo.widget.RefreshListView
+                android:id="@+id/main_rlv_item"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
                 android:layout_weight="1"
-                android:maxLines="4"
-                android:background="@color/replyFrame"/>
+                android:divider="@null"
+                android:dividerHeight="3dp"
+                android:listSelector="#00000000">
+            </com.newbiechen.chatdemo.widget.RefreshListView>
 
-            <Button
-                android:id="@+id/main_btn_send"
-                android:layout_width="60dp"
-                android:layout_height="40dp"
-                android:layout_marginLeft="4dp"
-                android:focusable="true"
-                android:text="发送"
-                android:textColor="@android:color/white"/>
+            <com.newbiechen.chatdemo.widget.ChatFrameView
+                android:id="@+id/main_cf_toolbox"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/toolbox_height"/>
         </LinearLayout>
     </FrameLayout>
 </ScrollView>

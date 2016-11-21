@@ -2,10 +2,14 @@ package com.newbiechen.chatdemo;
 
 import android.os.Build;
 import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.TextWatcher;
+import android.text.style.ForegroundColorSpan;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -23,29 +27,27 @@ import android.widget.ScrollView;
 import com.newbiechen.chatdemo.adapter.ChatAdapter;
 import com.newbiechen.chatdemo.entity.ChatMessage;
 import com.newbiechen.chatdemo.utils.DimenUtils;
+import com.newbiechen.chatdemo.utils.PatternUtils;
+import com.newbiechen.chatdemo.widget.ChatFrameView;
+import com.newbiechen.chatdemo.widget.KeyboardStateHelper;
 import com.newbiechen.chatdemo.widget.RefreshListView;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.regex.Matcher;
 
 public class MainActivity extends AppCompatActivity {
-    private LinearLayout mLinearSendFrame;
     private ScrollView mScrollView;
     private RefreshListView mRlv;
-    private EditText mEtContent;
-    private Button mBtnSend;
+    private ChatFrameView mChatFrame;
+    private LinearLayout mLinearContent;
 
-    private ViewTreeObserver.OnGlobalLayoutListener mGlobalLayoutListener;
-    private InputMethodManager mInputManager;
     private ChatAdapter mAdapter;
 
     private final Handler mHandler = new Handler();
     private final List<ChatMessage> mChatMessageItems = new ArrayList<>();
     private final Random mRandom = new Random();
-
-    private String mSendContent;
-    private boolean isKeyboardUp = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,17 +60,26 @@ public class MainActivity extends AppCompatActivity {
 
     private void initView(){
         mRlv = (RefreshListView) findViewById(R.id.main_rlv_item);
-        mEtContent = (EditText) findViewById(R.id.main_et_content);
-        mBtnSend = (Button) findViewById(R.id.main_btn_send);
-        mLinearSendFrame = (LinearLayout) findViewById(R.id.main_linear_send_frame);
         mScrollView = (ScrollView) findViewById(R.id.main_sv_content);
+        mChatFrame = (ChatFrameView) findViewById(R.id.main_cf_toolbox);
+        mLinearContent = (LinearLayout) findViewById(R.id.main_linear_content);
         setUpListView();
     }
 
     public void setUpListView(){
-
         mChatMessageItems.add(new ChatMessage("","以后的版本支持链接高亮喔:http://www.kymjs.com支持http、https、svn、ftp开头的链接",ChatMessage.TYPE_REPLY,ChatMessage.STATUS_SUCCEED));
         mChatMessageItems.add(new ChatMessage("","<a href=\"http://kymjs.com\">自定义链接</a>也是支持的",ChatMessage.TYPE_SEND,ChatMessage.STATUS_SUCCEED));
+        mChatMessageItems.add(new ChatMessage("","以后的版本支持链接高亮喔:http://www.kymjs.com支持http、https、svn、ftp开头的链接",ChatMessage.TYPE_REPLY,ChatMessage.STATUS_SUCCEED));
+        mChatMessageItems.add(new ChatMessage("","<a href=\"http://kymjs.com\">自定义链接</a>也是支持的",ChatMessage.TYPE_SEND,ChatMessage.STATUS_SUCCEED));
+        mChatMessageItems.add(new ChatMessage("","以后的版本支持链接高亮喔:http://www.kymjs.com支持http、https、svn、ftp开头的链接",ChatMessage.TYPE_REPLY,ChatMessage.STATUS_SUCCEED));
+        mChatMessageItems.add(new ChatMessage("","<a href=\"http://kymjs.com\">自定义链接</a>也是支持的",ChatMessage.TYPE_SEND,ChatMessage.STATUS_SUCCEED));
+        mChatMessageItems.add(new ChatMessage("","以后的版本支持链接高亮喔:http://www.kymjs.com支持http、https、svn、ftp开头的链接",ChatMessage.TYPE_REPLY,ChatMessage.STATUS_SUCCEED));
+        mChatMessageItems.add(new ChatMessage("","<a href=\"http://kymjs.com\">自定义链接</a>也是支持的",ChatMessage.TYPE_SEND,ChatMessage.STATUS_SUCCEED));
+        mChatMessageItems.add(new ChatMessage("","以后的版本支持链接高亮喔:http://www.kymjs.com支持http、https、svn、ftp开头的链接",ChatMessage.TYPE_REPLY,ChatMessage.STATUS_SUCCEED));
+        mChatMessageItems.add(new ChatMessage("","<a href=\"http://kymjs.com\">自定义链接</a>也是支持的",ChatMessage.TYPE_SEND,ChatMessage.STATUS_SUCCEED));
+        mChatMessageItems.add(new ChatMessage("","以后的版本支持链接高亮喔:http://www.kymjs.com支持http、https、svn、ftp开头的链接",ChatMessage.TYPE_REPLY,ChatMessage.STATUS_SUCCEED));
+        mChatMessageItems.add(new ChatMessage("","<a href=\"http://kymjs.com\">自定义链接</a>也是支持的",ChatMessage.TYPE_SEND,ChatMessage.STATUS_SUCCEED));
+
         mAdapter = new ChatAdapter(this);
         mAdapter.addItems(mChatMessageItems);
         mRlv.setAdapter(mAdapter);
@@ -87,101 +98,51 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initWidget(){
-        mInputManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
     }
 
     private void initListener(){
-        mEtContent.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                mSendContent = charSequence.toString().trim();
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-
-            }
-        });
-
-        mBtnSend.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                final ChatMessage chatMessage = new ChatMessage("",mSendContent,ChatMessage.TYPE_SEND,ChatMessage.STATUS_SENDING);
-                mAdapter.addNextItem(chatMessage);
-                mRlv.setSelection(mAdapter.getCount());
-                mHandler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        chatMessage.setMsgStatus(ChatMessage.STATUS_SUCCEED);
-                        mAdapter.notifyDataSetChanged();
-                    }
-                },1000);
-
-                //消除文字
-                mSendContent = "";
-                mEtContent.setText(mSendContent);
-            }
-        });
         /**
          * 点击ScrollView的时候，隐藏发送框
          */
         mScrollView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                if (isKeyboardUp){
-                    mInputManager.toggleSoftInput(0,InputMethodManager.HIDE_NOT_ALWAYS);
-                    isKeyboardUp = false;
-                }
+                mChatFrame.hideKeyBoard();
                 return false;
             }
         });
-        mGlobalLayoutListener = new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                //判断keyboard是否显示或则隐藏
-                int otherHeight = DimenUtils.getStatusBarHeight(MainActivity.this) +
-                        DimenUtils.getActionbarHeight(MainActivity.this) + DimenUtils.getNavBarHeight(MainActivity.this);
-                int distance = DimenUtils.getScreenHeight(MainActivity.this) -
-                        DimenUtils.getContentLayoutHeight(MainActivity.this);
-                //如果之间的距离大于其他零件的距离，说明根布局缩小了
-                if (distance > otherHeight){
-                    isKeyboardUp = true;
-                }
-                else {
-                    isKeyboardUp = false;
-                }
-            }
-        };
 
-        //当根布局发生变化的时候的监听。
-        getWindow().getDecorView().getRootView().getViewTreeObserver()
-                .addOnGlobalLayoutListener(mGlobalLayoutListener);
+        mChatFrame.setOnChatFrameListener(new ChatFrameView.OnChatFrameListener() {
+            @Override
+            public void sendMessage(String inputContent) {
+                ChatMessage message = new ChatMessage("",inputContent,ChatMessage.TYPE_SEND,ChatMessage.STATUS_SENDING);
+                mAdapter.addNextItem(message);
+                mRlv.setSelection(mAdapter.getCount());
+            }
+        });
     }
+
+
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
-        //动态修改ListView的大小
+        //动态修改LinearLayout的大小
         if (hasFocus){
             //当前可展示空间的高度
             int contentHeight = DimenUtils.getContentLayoutHeight(this);
-            int sendFrameHeight = mLinearSendFrame.getHeight();
-            int listViewHeight = contentHeight - sendFrameHeight;
+            int sendFrameHeight = mChatFrame.getHeight();
             //动态设置高度
             FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT, listViewHeight
+                    ViewGroup.LayoutParams.MATCH_PARENT, contentHeight
             );
-            mRlv.setLayoutParams(layoutParams);
+            mLinearContent.setLayoutParams(layoutParams);
         }
     }
 
 
-    @Override
+/*    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main,menu);
         return super.onCreateOptionsMenu(menu);
@@ -196,19 +157,11 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
         return super.onOptionsItemSelected(item);
-    }
+    }*/
 
     @Override
     protected void onDestroy() {
-        //解除注册
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN){
-            getWindow().getDecorView().getViewTreeObserver()
-                    .removeOnGlobalLayoutListener(mGlobalLayoutListener);
-        }
-        else {
-            getWindow().getDecorView().getViewTreeObserver()
-                    .removeGlobalOnLayoutListener(mGlobalLayoutListener);
-        }
+        mChatFrame.removeChatFrame();
         super.onDestroy();
     }
 

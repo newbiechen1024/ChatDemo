@@ -5,6 +5,7 @@ package com.newbiechen.chatdemo.widget;
  */
 
 import android.content.Context;
+import android.support.v7.app.AppCompatActivity;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,6 +19,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 
 import com.newbiechen.chatdemo.R;
+import com.newbiechen.chatdemo.utils.DimenUtils;
 
 public class RefreshListView extends ListView implements OnScrollListener {
 
@@ -29,14 +31,11 @@ public class RefreshListView extends ListView implements OnScrollListener {
     private static final String TAG = "PullToRefreshListView";
 
     private OnRefreshListener mOnRefreshListener;
-
-    /**
-     * Listener that will receive notifications every time the list scrolls.
-     */
     private OnScrollListener mOnScrollListener;
     private LayoutInflater mInflater;
 
     private RelativeLayout mRefreshView;
+    private Context mContext;
 
     private int mCurrentScrollState;
     private int mRefreshState;
@@ -48,17 +47,16 @@ public class RefreshListView extends ListView implements OnScrollListener {
     private boolean mBounceHack;
 
     public RefreshListView(Context context) {
-        super(context);
-        init(context);
+        this(context,null);
     }
 
     public RefreshListView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        init(context);
+        this(context, attrs,0);
     }
 
     public RefreshListView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+        mContext = context;
         init(context);
     }
 
@@ -83,16 +81,12 @@ public class RefreshListView extends ListView implements OnScrollListener {
     }
 
     @Override
-    protected void onAttachedToWindow() {
-        super.onAttachedToWindow();
-        setSelection(1);
-    }
-
-    @Override
     public void setAdapter(ListAdapter adapter) {
         super.setAdapter(adapter);
-        setSelection(1);
+        setSelection(adapter.getCount());
     }
+
+
 
     /**
      * Set the listener that will receive notifications every time the list

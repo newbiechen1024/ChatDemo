@@ -1,0 +1,53 @@
+一、任务
+
+完成表情框
+
+1、首先制作出表情框，其他的之后在想。
+表情框的制作：
+使用RecyclerView，仿QQ添加Decoration，纵向
+
+发现的问题，无法重写setTypeface改变字体样式。
+
+使用typeface做表情框执行速度非常慢。（GG了，看来得换一种方法了）
+(文章说0 0，速度比span快的~~然而)
+通过textSize设置表情的大小。
+
+
+1、设置下载表情的存储路径（设置存储在App的缓存文件中，利用Context）
+（存储的四种形式：Environment.getExternalStorage、Environment.getPublicStorage
+Context.getFile(),Context.getCacheFile()）
+任何应用私有的文件的应该被放置在 Context.getExternalFilesDir返回的目录下，在应用被卸载的时候，系统会清理的就是这个目录。
+另一些共享文件应该被放置在 getExternalStoragePublicDirectory(String)返回的目录中。
+选择第二个
+
+今日掌握的知识：
+
+1、File文件的复习
+每个路径的作用
+
+2、Css样式的编写
+
+3、完成了表情框 0 0
+
+基本制作完成：
+
+完成的功能：
+1、支持下拉显示历史，输入数据的时候数据显示在最后
+2、当软键盘出现的时候，能够将整体布局上移
+3、支持http、www、手机号高亮显示
+4、支持表情输入
+
+学到的东西：
+1、通过ListView制作刷新界面
+2、当键盘显示的时候，能够使ListView上滑显示
+3、允许TextView高亮显示，并使用正则表达式设置Http/www/手机号/邮箱等
+4、通过ttf文件表情框
+5、完成工具框，消失显示的逻辑
+
+缺点：
+1、刷新控件当数据不够一页的时候显示有问题
+2、工具栏无法将ListView上移，对只有键盘才能上移
+3、表情框的显示速度太慢，有时候还会卡崩掉。。。(后面解决了，发现是加载TypeFace的速度太慢了0 0，要从数据中读写)
+
+
+

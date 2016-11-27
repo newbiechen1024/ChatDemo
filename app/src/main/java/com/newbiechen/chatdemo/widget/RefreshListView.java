@@ -32,6 +32,7 @@ public class RefreshListView extends ListView implements OnScrollListener {
 
     private OnRefreshListener mOnRefreshListener;
     private OnScrollListener mOnScrollListener;
+    private OnContextTouchListener mContextTouchListener;
     private LayoutInflater mInflater;
 
     private RelativeLayout mRefreshView;
@@ -142,6 +143,14 @@ public class RefreshListView extends ListView implements OnScrollListener {
                 break;
         }
         return super.onTouchEvent(event);
+    }
+
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
+        if (ev.getAction() == MotionEvent.ACTION_DOWN){
+            mContextTouchListener.onContextTouch();
+        }
+        return super.onInterceptTouchEvent(ev);
     }
 
     private void applyHeaderPadding(MotionEvent ev) {
@@ -300,7 +309,6 @@ public class RefreshListView extends ListView implements OnScrollListener {
      * list.
      */
     private class OnClickRefreshListener implements OnClickListener {
-
         @Override
         public void onClick(View v) {
             if (mRefreshState != REFRESHING) {
@@ -323,5 +331,13 @@ public class RefreshListView extends ListView implements OnScrollListener {
          * expected to indicate that the refresh has completed.
          */
         public void onRefresh();
+    }
+
+    public interface OnContextTouchListener{
+        void onContextTouch();
+    }
+
+    public void setOnContextTouchListener(OnContextTouchListener listener){
+        mContextTouchListener = listener;
     }
 }

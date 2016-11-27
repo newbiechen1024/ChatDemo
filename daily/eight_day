@@ -1,0 +1,66 @@
+﻿一、未完成的任务
+
+1、JAVA编程思想，集合的复习
+
+2、SpannableString的使用（记录到CSDN）
+
+二、解决问题
+
+1、显示高亮部分的时候卡顿
+
+原来是在一句话内使用多个高亮的时候，ForegroundColorSpan对象是不是可以复用的。
+还有是因为，调用正则表达式的次数太多，导致的卡顿。所以需要将生成的正则表达式复用。
+最后发现，还是正则表达式的问题- -
+PATTERN_WWW("www.([a-zA-Z0-9]+[/?.?])"+"[a-zA-Z0-9]*\\??([a-zA-Z0-9]*=[a-zA-Z0-9]*&?)*"),
+PATTERN_HTTP("(http|https|ftp|svn)://([a-zA-Z0-9]+[/?.?])"+
+        "[a-zA-Z0-9]*\\??([a-zA-Z0-9]*=[a-zA-Z0-9]*&?)*"),
+PATTERN_PHONE("(\\d{3,4}-)?\\d{8,11}"),
+PATTERN_EMAIL("[a-zA-Z._0-9]+@([a-zA-Z0-9_=-]+.)(com|net|org|cn)");
+旧代码：
+PATTERN_WWW("www.([\\w-]+.)+(com|net|org|htm|cn|html)"+
+        "(/[\\w.+-]+)*([?][\\w+=&-]+){0,1}"),
+PATTERN_HTTP("(http|ftp|https)://([\\w-]+.)+(com|net|org|htm|cn|html)"+
+        "(/[\\w.+-]+)*([?][\\w+=&-]+){0,1}"),
+PATTERN_PHONE("(\\d{3,4}-)?\\d{8,11}"),
+PATTERN_EMAIL("[a-zA-Z._0-9]*@([^\\s.]+.)(com|net|org|htm|cn|html)");
+但是用eclispe测试的时候，之间算法的差距并不大0 0，这是为什么。
+
+二、今天的任务
+
+1、完成表情的制作。
+
+第一步：表情框是使用ViewPager作为工具的显示栏的。(完成)
+首先是ViewPager之间的切换，与软键盘的关系。
+
+当软键盘不显示的时候，ViewPager未显示的时候，打开工具箱
+当keyboard不显示的时候，ViewPager已显示的时候，如果是同一个状态，则隐藏ViewPager
+如果是不同状态，则切换Framgent。
+当软键盘显示的时候，keyboard显示。监听EditText的焦点，当EditText获得焦点的时候，
+将软键盘隐藏。
+当软键盘显示的时候，显示工具框，首先隐藏软键盘，然后开启工具箱。
+
+分解其中的状态：
+1、当VIewPager显示的时候，并为同一状态的时候，隐藏工具箱。
+2、当ViewPager未显示的时候，或者状态不同的时候，打开工具箱，并且隐藏keyboard。
+
+所以有几个状态和功能：
+1、当前ViewPager的状态。当前inputbox的状态
+2、显示Viewpager,显示、隐藏软键盘
+
+第二步。制作表情窗口
+
+
+三、发现的问题(未解决)
+
+当某个东西很耗内存的时候，如何检测到耗内存的方法，并判定其耗内存的时间。做出相应的改进 0 0。
+
+问题一：判断方法运行的时间。（发现使用System.currentMilliter()不准确）
+问题二：如何查询方法的耗时。使用tracer。
+
+四、未完成的问题
+
+1、如何当ViewPager上移的时候，ListView上移
+2、当点击ListVIew的时候，Toolbox隐藏
+3、给高亮的文字添加点击事件（UrlPan,clickSpan、LinkMovementMode）
+4、制作Emoji表情框的原理，表情框是一个Framgent，在Fragment中添加一个ViewPager，通过GridView配置EmojiIcon的值，将多个GridView配置到ViewPager中，这就完成了
+EmojiIcon显示框。由于EmojiIcon比较大，所以采用FragmentStatePager来设置初始的ViewPager。

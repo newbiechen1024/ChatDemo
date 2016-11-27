@@ -1,0 +1,14 @@
+一、任务
+
+1、点击ScrollView隐藏hideLayout
+2、当使用back的使用隐藏hideLayout
+
+制作Emoji表情框
+
+步骤：
+
+1、创建ViewPager，作为表情和工具框的界面
+2、创建FaceCategoryFragment，用来切换表情界面
+   我们通过下载表情到外存中，然后通过File获取文件夹的路径、数量和用来显示
+   category的小图标。之后将具体文件路径
+3、使用replace方式

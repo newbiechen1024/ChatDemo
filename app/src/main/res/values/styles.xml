@@ -23,6 +23,7 @@
         <item name="android:textSize">18sp</item>
         <item name="android:clickable">false</item>
         <item name="android:focusable">false</item>
+        <item name="android:maxWidth">280dp</item>
     </style>
 
     <style name="msg_image_status">

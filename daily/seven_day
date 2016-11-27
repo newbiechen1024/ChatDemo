@@ -1,4 +1,4 @@
-一、昨日问题
+﻿一、昨日问题
 
 1、当Keyboard上升的时候，有一段被Toolbox给覆盖了
 
@@ -31,4 +31,21 @@ FrameLayout，则应该使用FrameLayout.LayoutParams()。如果是LinearLayout
 再嵌套一层LinearLayout自行改变布局。
 
 2、需要重新了解一下集合。（集合的忘光了）
+
+三、发现的问题(未解决)
+
+1、ScrollView与Keyboard，当Keyboard open的时候ScrollView会移动到焦点的位置。
+该位置，使焦点的位置，正好在keyboard的上方。所以导致了，toolbox无法完全显示。
+（尚未找到解决办法，可能需要重新思考一下是否应该使用ScrollView布局的问题）
+
+2、显示高亮部分的时候卡顿，发现不是正则表达式的锅，应该是SpannableString没有用好的缘故。（放在明天解决）
+
+四、今天的任务
+
+制作表情啦~~~（未完成）
+
+1、原理：
+表情还有工具箱其实都是一个Fragment。依托于ViewPager的载体。
+
+今天制作，ViewPager与Keyboard的切换。
 

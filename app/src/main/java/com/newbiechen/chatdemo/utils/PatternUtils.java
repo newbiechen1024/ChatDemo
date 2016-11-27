@@ -15,12 +15,11 @@ public class PatternUtils {
     }
 
     public enum PatternType{
-        PATTERN_WWW("www.([\\w-]+.)+(com|net|org|htm|cn|html)"+
-                "(/[\\w.+-]+)*([?][\\w+=&-]+){0,1}"),
-        PATTERN_HTTP("(http|ftp|https)://([\\w-]+.)+(com|net|org|htm|cn|html)"+
-                "(/[\\w.+-]+)*([?][\\w+=&-]+){0,1}"),
+        PATTERN_WWW("www.([a-zA-Z0-9]+[/?.?])"+"[a-zA-Z0-9]*\\??([a-zA-Z0-9]*=[a-zA-Z0-9]*&?)*"),
+        PATTERN_HTTP("(http|https|ftp|svn)://([a-zA-Z0-9]+[/?.?])"+
+                "[a-zA-Z0-9/]*\\??([a-zA-Z0-9]*=[a-zA-Z0-9]*&?)*"),
         PATTERN_PHONE("(\\d{3,4}-)?\\d{8,11}"),
-        PATTERN_EMAIL("[a-zA-Z._0-9]*@([^\\s.]+.)(com|net|org|htm|cn|html)");
+        PATTERN_EMAIL("[a-zA-Z._0-9]+@([a-zA-Z0-9_=-]+.)(com|net|org|cn)");
         private String regular;
 
         private PatternType (String regular){

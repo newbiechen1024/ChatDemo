@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <FrameLayout
+        android:id="@+id/category_frame_expression"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"></FrameLayout>
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:scrollbars="none">
+        <GridView
+            android:id="@+id/category_gv_item"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        </GridView>
+    </HorizontalScrollView>
+</LinearLayout>

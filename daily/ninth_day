@@ -1,0 +1,76 @@
+一、任务
+
+如何将Emoji于文字显示在TextView上。
+
+1、SpannableString的使用。
+与SpannableStringBuilder的区别。
+SpannableString主要方法。（及其参数的认识）
+SpannableString重要的修饰Span类。(Span的点击，UrlSpan，DrawableSpan，自定义Span)
+注：自定义Span中，明白了，可以获取textView.getPaint()来设置textView的形状等。
+
+2、Html.fromHtml()与TextView
+当使用<img src="xxx"/>这样的标签的时候，src=""如何定位。
+Html的点击事件，怎么确定。
+
+3、使用.ttf文件将Emoji作为一种字符。(Unicode编码)
+如何制作.ttf文件及其原理（未知）（ttf表示字体集）
+制作.ttf文件的地址（http://ragnraok.github.io/android-emoji-font-method.html）
+使用将.ttf放在assets/fonts目录下，代码中使用TypeFace typeFace = TypeFace.createFromAsstes();
+然后使用textView.setTypeFace()。使用该typeFace()。
+人工使用Emoji:首先获取emoji的Unicode码(0x1F602)，将其转换成Character，再放入textView中
+（出现了问题，如果使用了color-emoji.ttf，输入的数字就显示不了了,看来需要了解.ttf制作的原理
+及textView是如何使用的原理。当然最简单的方法，就是换一个.ttf文件~）
+（找到了好用的.ttf格式文件了，之后只需要知道如何制作.ttf格式文件就可以了
+参考）
+
+4、通过EmojiIconDemo了解通过使用Span制作可使用Emoji的TextView
+
+核心类是EmojiHandler：
+
+1、制作Emoji编码与Android内置图片之间的映射表。（要有两份，一份是Unicode编码的，一份是Softbank编码的）
+2、自定义EmojiSpan(继承于DynamicImageSpan)。
+3、然后就是进行判断
+TextView提供了几个自定义功能：
+1、是否使用含Emoji功能的TextView
+2、设置Emoji的Size
+3、设置使用Emoji功能的文字范围(start~length)
+4、设置TextView的位置（居中，置顶，还是置底）
+
+首先判断，TextView是否允许使用Emoji。
+
+之后删除其文本中的旧EmojiSpan。
+
+其次判断，文字中可使用Emoji的范围
+然后，获取文字，并分割成单个char，
+判断是否是Softbank编码，如果是则获取图片的id
+判断编码的代码：（不太懂原理 - -）
+private static boolean isSoftBankEmoji(char c) {
+    return ((c >> 12) == 0xe);
+}
+
+判断是否是unicode的编码，如果是同样获取图片的id：
+之后需要将char转换成int类型的unicode编码
+char c = text.getCharAt(i);
+int unicode = code;
+
+最后判断CombingMask，这个格式不太懂，但是作用是关于ios的数字按钮的，无视。
+
+如果最后icon != 0，就表示有id了。
+然后创建EmojiSpan，将icon加入到EmojiSpan中，通过原先的自定义参数，来设置Emoji图片在TextView中的位置和大小
+通过drawable.setBounds()来设置。
+然后使用spanString.setSpan()，将图片加入到TextView中。
+
+核心原理：SpannableString加入图片。
+
+代码的优点：
+
+SparseIntArray：是什么，跟Map相比之下的效率
+
+在EmojiSpan类中，通过使用WeakReference来保存对图片资源的引用。（小型的缓存）
+
+二、制作
+
+通过使用android-emoji.tff为基础，制作可使用的Emoji表情框。
+
+
+

@@ -1,9 +1,12 @@
 package com.newbiechen.chatdemo.adapter;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
+import android.text.style.UnderlineSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +20,8 @@ import com.newbiechen.chatdemo.R;
 import com.newbiechen.chatdemo.entity.ChatMessage;
 import com.newbiechen.chatdemo.utils.PatternUtils;
 
+import java.util.AbstractCollection;
+import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -30,9 +35,10 @@ import static android.view.View.GONE;
 public class ChatAdapter extends BaseAdapter {
     private final List<ChatMessage> mChatMsgItems = new ArrayList<>();
     private Context mContext;
-
+    private Typeface mTypeFace;
     public ChatAdapter(Context context) {
         mContext = context;
+        mTypeFace = Typeface.createFromAsset(mContext.getAssets(),"fonts/AppleColorEmoji.ttf");
     }
 
     @Override
@@ -53,6 +59,7 @@ public class ChatAdapter extends BaseAdapter {
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
         ChatMessageViewHolder holder = null;
+        ChatMessage msg = (ChatMessage) getItem(i);
         if (view == null){
             int userType = getItemViewType(i);
             holder = new ChatMessageViewHolder();
@@ -69,25 +76,23 @@ public class ChatAdapter extends BaseAdapter {
             holder.tvContent = (TextView) view.findViewById(R.id.msg_tv_content);
             holder.pbSending = (ProgressBar) view.findViewById(R.id.msg_pb_load);
             holder.ivSendFail = (ImageView) view.findViewById(R.id.msg_iv_send_fail);
-
             holder.tvContent.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Toast.makeText(mContext, "成功", Toast.LENGTH_SHORT).show();
                 }
             });
-
-
+            holder.tvContent.setTypeface(mTypeFace);
             view.setTag(holder);
         }
         else {
             holder = (ChatMessageViewHolder) view.getTag();
         }
-        //初始化数据
-        ChatMessage msg = (ChatMessage) getItem(i);
+
+        //判断当前img状态
         holder.ivIcon.setImageResource(R.mipmap.default_head);
         holder.tvContent.setText(setTextHighLight(msg.getContent()));
-        //判断当前img状态
+
         switch (msg.getMsgStatus()){
             case ChatMessage.STATUS_SENDING:
                 holder.pbSending.setVisibility(View.VISIBLE);
@@ -107,16 +112,16 @@ public class ChatAdapter extends BaseAdapter {
 
     private SpannableString setTextHighLight(String str){
         SpannableString spanString = new SpannableString(str);
-        ForegroundColorSpan colorSpan = new ForegroundColorSpan(
-                mContext.getResources().getColor(R.color.text_foreground_color)
-        );
         //全部用正则表达式检查一遍
         for (PatternUtils.PatternType patternType : PatternUtils.PatternType.values()){
             Matcher matcher = PatternUtils.pattern(str,patternType);
+            int colorId = mContext.getResources().getColor(R.color.text_foreground_color);
             while (matcher.find()){
-                spanString.setSpan(colorSpan,matcher.start()
+                spanString.setSpan(new ForegroundColorSpan(colorId),matcher.start()
                         ,matcher.end(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            }
+                //下划线
+                spanString.setSpan(new UnderlineSpan(),matcher.start(),matcher.end(),Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+             }
         }
         return spanString;
     }
